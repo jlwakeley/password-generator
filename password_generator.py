@@ -50,6 +50,11 @@ def generate_password_click(
     pyperclip.copy(password)
 
 
+def copy_to_clipboard(password_display) -> None:
+    password = password_display.get("1.0", tk.END).strip()
+    pyperclip.copy(password)
+
+
 def create_gui() -> None:
     window = tk.Tk()
     window.title("Password Generator")
@@ -65,6 +70,11 @@ def create_gui() -> None:
             excluded_symbols_entry, length_entry, password_display
         ),
     )
+    copy_button = tk.Button(
+        window,
+        text="Copy to Clipboard",
+        command=lambda: copy_to_clipboard(password_display),
+    )
     password_display_label = tk.Label(window, text="Generated Password:")
     password_display = tk.Text(window, height=1, width=30)
     password_display.config(state=tk.DISABLED)
@@ -76,6 +86,7 @@ def create_gui() -> None:
     generate_button.grid(row=2, columnspan=2, padx=5, pady=5)
     password_display_label.grid(row=3, column=0, padx=5, pady=5, sticky="e")
     password_display.grid(row=3, column=1, padx=5, pady=5)
+    copy_button.grid(row=4, columnspan=2, padx=5, pady=5)
 
     window.mainloop()
 
