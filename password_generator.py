@@ -2,7 +2,7 @@ import secrets
 import string
 import pyperclip
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 
 
 def generate_password(excluded_symbols: str, length: int) -> str:
@@ -59,34 +59,52 @@ def create_gui() -> None:
     window = tk.Tk()
     window.title("Password Generator")
 
-    excluded_symbols_label = tk.Label(window, text="Exclude what symbols?")
-    excluded_symbols_entry = tk.Entry(window)
-    length_label = tk.Label(window, text="Length requirement?")
-    length_entry = tk.Entry(window)
-    generate_button = tk.Button(
-        window,
+    window_style = ttk.Style()
+    window_style.theme_use("clam")
+
+    main_frame = ttk.Frame(window, padding="20")
+    main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+
+    font = ("Helvetica", 12)
+
+    excluded_symbols_label = ttk.Label(
+        main_frame, text="Exclude what symbols?", font=font
+    )
+    excluded_symbols_entry = ttk.Entry(main_frame, font=font)
+    length_label = ttk.Label(main_frame, text="Length requirement?", font=font)
+    length_entry = ttk.Entry(main_frame, font=font)
+    generate_button = ttk.Button(
+        main_frame,
         text="Generate Password",
         command=lambda: generate_password_click(
             excluded_symbols_entry, length_entry, password_display
         ),
+        style="TButton",
     )
-    copy_button = tk.Button(
-        window,
+    copy_button = ttk.Button(
+        main_frame,
         text="Copy to Clipboard",
         command=lambda: copy_to_clipboard(password_display),
+        style="TButton",
     )
-    password_display_label = tk.Label(window, text="Generated Password:")
-    password_display = tk.Text(window, height=1, width=30)
+    password_display_label = ttk.Label(
+        main_frame, text="Generated Password:", font=font
+    )
+    password_display = tk.Text(main_frame, height=1, width=30, font=font)
     password_display.config(state=tk.DISABLED)
 
     excluded_symbols_label.grid(row=0, column=0, padx=5, pady=5, sticky="e")
     excluded_symbols_entry.grid(row=0, column=1, padx=5, pady=5)
     length_label.grid(row=1, column=0, padx=5, pady=5, sticky="e")
     length_entry.grid(row=1, column=1, padx=5, pady=5)
-    generate_button.grid(row=2, columnspan=2, padx=5, pady=5)
+    generate_button.grid(
+        row=2, column=0, columnspan=2, padx=5, pady=10, sticky=(tk.W, tk.E)
+    )
     password_display_label.grid(row=3, column=0, padx=5, pady=5, sticky="e")
     password_display.grid(row=3, column=1, padx=5, pady=5)
-    copy_button.grid(row=4, columnspan=2, padx=5, pady=5)
+    copy_button.grid(
+        row=4, column=0, columnspan=2, padx=5, pady=10, sticky=(tk.W, tk.E)
+    )
 
     window.mainloop()
 
