@@ -8,7 +8,7 @@ This is a simple password generator application built with Python using the Tkin
 - Copy generated passwords to the clipboard with a single click.
 - Visual feedback with a graphical user interface.
 
-## Requirements
+## Requirements and Dependencies
 
 - Python 3.x
 - Tkinter (Usually comes pre-installed with Python)
