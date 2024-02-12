@@ -1,9 +1,37 @@
-# Password-Generator
+# Password Generator
 
-First prompt will have the user input letters, symbols, or numbers that need to be excluded from the desired password.
+This is a simple password generator application built with Python using the Tkinter library for the graphical user interface (GUI). It allows users to generate secure passwords with customizable length and excluded symbols.
 
-Second prompt will have the user set the desired length.
+## Features
 
-Password will be generated and automatically copied to user's clipboard.
+- Generate passwords with specified length and excluded symbols.
+- Copy generated passwords to the clipboard with a single click.
+- Visual feedback with a graphical user interface.
 
-The option to generate another password or exit.
+## Requirements
+
+- Python 3.x
+- Tkinter (Usually comes pre-installed with Python)
+- Pyperclip (You can install it via pip) 
+```bash
+pip install pyperclip
+```
+
+## Usage
+
+1. Clone the repository or download the script `password_generator.py`.
+2. Make sure you have Python installed on your system.
+3. Install the required dependencies.
+4. Run the script: 
+```bash
+python password_generator.py
+```
+5. The graphical user interface will appear.
+6. Enter symbols you want to exclude and the desired length of the password.
+7. Click on the "Generate Password" button.
+8. The generated password will be displayed in the text box.
+9. You can copy the password to the clipboard by clicking the button.
+
+## Contributions
+
+Contributions are welcome! If you find any issues or have suggestions for improvements, feel free to open an issue or create a pull request.
