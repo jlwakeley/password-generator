@@ -27,6 +27,9 @@ pip install pyperclip
 python password_generator.py
 ```
 5. The graphical user interface will appear.
+
+![image](images/screenshot.png)
+
 6. Enter symbols you want to exclude and the desired length of the password.
 7. Click on the `Generate Password` button.
 8. The generated password will be displayed in the text box.
