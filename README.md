@@ -1,6 +1,6 @@
 # Password Generator
 
-This is a simple password generator application built with Python using the Tkinter library for the graphical user interface (GUI). It allows users to generate secure passwords with customizable length and excluded symbols.
+This is a simple password generator application built with Python using the PyQt5 library for the graphical user interface (GUI). It allows users to generate secure passwords with customizable length and excluded symbols.
 
 ## Features
 
@@ -11,10 +11,11 @@ This is a simple password generator application built with Python using the Tkin
 ## Requirements and Dependencies
 
 - Python 3.x
-- Tkinter (Usually comes pre-installed with Python)
+- PyQt5 (You can install it via pip)
 - Pyperclip (You can install it via pip) 
 ```bash
 pip install pyperclip
+pip install PyQt5
 ```
 
 ## Usage

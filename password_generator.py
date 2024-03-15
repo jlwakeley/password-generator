@@ -1,116 +1,157 @@
+import sys
 import secrets
 import string
-import pyperclip
-import tkinter as tk
-from tkinter import ttk, messagebox
+import pyperclip  # type: ignore # noqa: PGH003
+from PyQt5.QtWidgets import (
+    QApplication,
+    QWidget,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QVBoxLayout,
+    QTextEdit,
+    QMessageBox,
+    QCheckBox,
+)
 
 
-def generate_password(excluded_symbols: str, length: int) -> str:
-    """
-    Generate a password with the given length and excluded symbols
-    """
-    char_symb = string.ascii_letters + string.digits + string.punctuation
-    for char in excluded_symbols:
-        char_symb = char_symb.replace(char, "")
-    if not char_symb:
-        raise ValueError(
-            "All symbols, numbers, and letters are excluded. Please try again."
+def calculate_password_strength(password: str) -> int:
+    # Calculate password strength based on length and character variety
+    length_strength = min(len(password) // 4, 5)
+    variety_strength = len(set(password)) // 4
+    return min(length_strength + variety_strength, 10)
+
+
+class PasswordGeneratorApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self) -> None:
+        self.setWindowTitle("Password Generator")
+        self.resize(400, 300)  # Set the size of the window
+        layout = QVBoxLayout()
+
+        excluded_symbols_label = QLabel("Exclude what symbols?")
+        self.excluded_symbols_entry = QLineEdit()
+        layout.addWidget(excluded_symbols_label)
+        layout.addWidget(self.excluded_symbols_entry)
+
+        length_label = QLabel("Length requirement?")
+        self.length_entry = QLineEdit()
+        layout.addWidget(length_label)
+        layout.addWidget(self.length_entry)
+
+        self.require_upper_checkbox = QCheckBox("Require at least one uppercase letter")
+        layout.addWidget(self.require_upper_checkbox)
+
+        self.require_lower_checkbox = QCheckBox("Require at least one lowercase letter")
+        layout.addWidget(self.require_lower_checkbox)
+
+        self.require_special_checkbox = QCheckBox(
+            "Require at least one special character"
         )
-    return "".join(secrets.choice(char_symb) for i in range(length))
+        layout.addWidget(self.require_special_checkbox)
+
+        self.password_strength_label = QLabel()
+        layout.addWidget(self.password_strength_label)
+
+        generate_button = QPushButton("Generate Password")
+        generate_button.clicked.connect(self.generate_password_clicked)
+        layout.addWidget(generate_button)
+
+        self.password_display = QTextEdit()
+        self.password_display.setReadOnly(True)
+        layout.addWidget(self.password_display)
+
+        copy_button = QPushButton("Copy to Clipboard")
+        copy_button.clicked.connect(self.copy_to_clipboard_clicked)
+        layout.addWidget(copy_button)
+
+        self.setLayout(layout)
+
+    def generate_password_clicked(self) -> None:
+        require_upper = self.require_upper_checkbox.isChecked()
+        require_lower = self.require_lower_checkbox.isChecked()
+        require_special = self.require_special_checkbox.isChecked()
+        password = self.generate_password(require_upper, require_lower, require_special)
+        self.update_password_strength(password)
+        self.password_display.setPlainText(password)
+        pyperclip.copy(password)
+
+    def generate_password(
+        self, require_upper: bool, require_lower: bool, require_special: bool
+    ) -> str:
+        excluded_symbols = self.excluded_symbols_entry.text()
+        length = self.length_entry.text()
+        try:
+            length = int(length)  # type: ignore # noqa: PGH003
+            if length <= 0:  # type: ignore # noqa: PGH003
+                raise ValueError()
+        except ValueError:
+            show_error_message(
+                "Invalid length requirement. Please input a positive integer."
+            )
+            return ""
+
+        char_symb = string.ascii_lowercase + string.digits
+        if require_upper:
+            char_symb += string.ascii_uppercase
+        if require_special:
+            char_symb += string.punctuation
+
+        for char in excluded_symbols:
+            char_symb = char_symb.replace(char, "")
+
+        if not char_symb:
+            raise ValueError(
+                "All symbols, numbers, and letters are excluded. Please try again."
+            )
+
+        password = "".join(secrets.choice(char_symb) for _ in range(length))  # type: ignore # noqa: PGH003
+
+        if require_lower and not any(char.islower() for char in password):
+            password = secrets.choice(string.ascii_lowercase) + password[1:]
+
+        if require_upper and not any(char.isupper() for char in password):
+            password = secrets.choice(string.ascii_uppercase) + password[1:]
+
+        if require_special and not any(char in string.punctuation for char in password):
+            password = password[:-1] + secrets.choice(string.punctuation)
+
+        return password
+
+    def update_password_strength(self, password: str) -> None:
+        strength = calculate_password_strength(password)
+        if strength < 4:
+            self.password_strength_label.setText("Password Strength: Weak")
+            self.password_strength_label.setStyleSheet("color: red")
+        elif strength < 8:
+            self.password_strength_label.setText("Password Strength: Moderate")
+            self.password_strength_label.setStyleSheet("color: orange")
+        else:
+            self.password_strength_label.setText("Password Strength: Strong")
+            self.password_strength_label.setStyleSheet("color: green")
+
+    def copy_to_clipboard_clicked(self) -> None:
+        password = self.password_display.toPlainText()
+        pyperclip.copy(password)
 
 
-def generate_password_click(
-    excluded_symbols_entry, length_entry, password_display
-) -> None:
-    excluded_symbols = excluded_symbols_entry.get()
-    length = length_entry.get()
-    try:
-        length = int(length)
-        if length <= 0:
-            raise ValueError()
-    except ValueError:
-        messagebox.showerror(
-            "Error", "Invalid length requirement. Please input a positive integer."
-        )
-        return
-
-    try:
-        password = generate_password(excluded_symbols, length)
-    except ValueError:
-        messagebox.showerror(
-            "Error", "All symbols, numbers, and letters are excluded. Please try again."
-        )
-        return
-
-    password_display.config(state=tk.NORMAL)
-    password_display.delete("1.0", tk.END)
-    password_display.insert(tk.END, password)
-    password_display.config(state=tk.DISABLED)
-
-    pyperclip.copy(password)
-
-
-def copy_to_clipboard(password_display) -> None:
-    password = password_display.get("1.0", tk.END).strip()
-    pyperclip.copy(password)
-
-
-def create_gui() -> None:
-    window = tk.Tk()
-    window.title("Password Generator")
-
-    window_style = ttk.Style()
-    window_style.theme_use("clam")
-
-    main_frame = ttk.Frame(window, padding="20")
-    main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-
-    font = ("Helvetica", 12)
-
-    excluded_symbols_label = ttk.Label(
-        main_frame, text="Exclude what symbols?", font=font
-    )
-    excluded_symbols_entry = ttk.Entry(main_frame, font=font)
-    length_label = ttk.Label(main_frame, text="Length requirement?", font=font)
-    length_entry = ttk.Entry(main_frame, font=font)
-    generate_button = ttk.Button(
-        main_frame,
-        text="Generate Password",
-        command=lambda: generate_password_click(
-            excluded_symbols_entry, length_entry, password_display
-        ),
-        style="TButton",
-    )
-    copy_button = ttk.Button(
-        main_frame,
-        text="Copy to Clipboard",
-        command=lambda: copy_to_clipboard(password_display),
-        style="TButton",
-    )
-    password_display_label = ttk.Label(
-        main_frame, text="Generated Password:", font=font
-    )
-    password_display = tk.Text(main_frame, height=1, width=30, font=font)
-    password_display.config(state=tk.DISABLED)
-
-    excluded_symbols_label.grid(row=0, column=0, padx=5, pady=5, sticky="e")
-    excluded_symbols_entry.grid(row=0, column=1, padx=5, pady=5)
-    length_label.grid(row=1, column=0, padx=5, pady=5, sticky="e")
-    length_entry.grid(row=1, column=1, padx=5, pady=5)
-    generate_button.grid(
-        row=2, column=0, columnspan=2, padx=5, pady=10, sticky=(tk.W, tk.E)
-    )
-    password_display_label.grid(row=3, column=0, padx=5, pady=5, sticky="e")
-    password_display.grid(row=3, column=1, padx=5, pady=5)
-    copy_button.grid(
-        row=4, column=0, columnspan=2, padx=5, pady=10, sticky=(tk.W, tk.E)
-    )
-
-    window.mainloop()
+def show_error_message(message: str) -> None:
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Critical)
+    msg.setText("Error")
+    msg.setInformativeText(message)
+    msg.setWindowTitle("Error")
+    msg.exec_()
 
 
 def main() -> None:
-    create_gui()
+    app = QApplication(sys.argv)
+    ex = PasswordGeneratorApp()
+    ex.show()
+    sys.exit(app.exec_())
 
 
 if __name__ == "__main__":
