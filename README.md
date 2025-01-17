@@ -12,28 +12,31 @@ This is a simple password generator application built with Python using the Tkin
 
 - Python 3.x
 - Tkinter (Usually comes pre-installed with Python)
-- Pyperclip (You can install it via pip) 
+- Dependencies listed in `requirements.txt`
+
+## Installation
+
+1. Clone the repository or download the files
+2. Make sure you have Python installed on your system
+3. Install the required dependencies:
 ```bash
-pip install pyperclip
+pip install -r requirements.txt
 ```
 
 ## Usage
 
-1. Clone the repository or download the script `password_generator.py`.
-2. Make sure you have Python installed on your system.
-3. Install the required dependencies.
-4. Run the script: 
+1. Run the script: 
 ```bash
 python password_generator.py
 ```
-5. The graphical user interface will appear.
+2. The graphical user interface will appear.
 
 ![image](images/screenshot.png)
 
-6. Enter symbols you want to exclude and the desired length of the password.
-7. Click on the `Generate Password` button.
-8. The generated password will be displayed in the text box.
-9. You can copy the password by pushing the `Copy to Clipboard` button.
+3. Enter symbols you want to exclude and the desired length of the password.
+4. Click on the `Generate Password` button.
+5. The generated password will be displayed in the text box.
+6. You can copy the password by pushing the `Copy to Clipboard` button.
 
 ## Contributions
 
