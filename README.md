@@ -11,18 +11,18 @@ This is a simple password generator application built with Python using the PyQt
 ## Requirements and Dependencies
 
 - Python 3.x
-- PyQt5 (You can install it via pip)
-- Pyperclip (You can install it via pip) 
+- Dependencies listed in requirements.txt
+
+Install all required dependencies using:
 ```bash
-pip install pyperclip
-pip install PyQt5
+pip install -r requirements.txt
 ```
 
 ## Usage
 
 1. Clone the repository or download the script `password_generator.py`.
 2. Make sure you have Python installed on your system.
-3. Install the required dependencies.
+3. Install the required dependencies using the command above.
 4. Run the script: 
 ```bash
 python password_generator.py
